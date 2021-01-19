@@ -1,7 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser')
 const path = require('path');
-var cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const createSignin = require('./signin.js');
+const database = require('./database.js');
 
 // handle command line args
 function handleArgs(args) {
@@ -16,7 +18,6 @@ function handleArgs(args) {
 
 // setup express app
 const app = express();
-const database = require('./database.js');
 
 const secureEndpoints = express.Router();
 const endpoints = express.Router();
@@ -60,6 +61,7 @@ app.get('/', function (req, res) {
 });
 
 // add api endpoints
+createSignin(endpoints);
 secureEndpoints.get('/refresh', (req, res) => {return res.send("aaahhh")});
 
 

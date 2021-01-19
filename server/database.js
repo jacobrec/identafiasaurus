@@ -5,6 +5,12 @@ const DB = "dino";
 const USERS = "Users";
 const FINDINGS = "Findings";
 
+async function getUserByEmail(email) {
+  const col = await getCollection(USERS);
+  const usr = await col.findOne({email});
+  return usr;
+}
+
 async function getCollection(name) {
     const client = await MongoClient.connect(loc);
     const db = await client.db(DB);
@@ -85,4 +91,5 @@ module.exports = {
   resetDatabase,
   addFinding,
   addUser,
+  getUserByEmail,
 };
