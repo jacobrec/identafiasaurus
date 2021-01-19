@@ -4,6 +4,8 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const createSignin = require('./signin.js');
 const database = require('./database.js');
+const token = require('./tokens.js');
+
 
 // handle command line args
 function handleArgs(args) {
@@ -29,7 +31,10 @@ const tokenExtracter = (req, res, next) => {
 };
 
 const secure = (req, res, next) => {
-  const isTokenValid = (tok) => false;
+  const isTokenValid = (tok) => {
+    const usr = token.parse(tok);
+    return usr && usr.isFull
+  };
   if (!req.tok) {
     res.status(401);
     return res.send('Missing Token');
@@ -37,6 +42,7 @@ const secure = (req, res, next) => {
     res.status(403);
     return res.send('Invalid Token');
   } else {
+    req.tok = token.parse(req.tok);
     next();
     return null;
   }
@@ -46,6 +52,9 @@ const secure = (req, res, next) => {
 secureEndpoints.use(cookieParser());
 secureEndpoints.use(tokenExtracter);
 secureEndpoints.use(secure);
+
+endpoints.use(cookieParser());
+endpoints.use(bodyParser());
 
 app.use('/api/', endpoints);
 app.use('/api/', secureEndpoints);
@@ -62,7 +71,11 @@ app.get('/', function (req, res) {
 
 // add api endpoints
 createSignin(endpoints);
-secureEndpoints.get('/refresh', (req, res) => {return res.send("aaahhh")});
+secureEndpoints.get('/refresh', async (req, res) => {
+  const tok = token.create({user: await database.getUserById(req.tok.id)});
+  res.cookie('auth', tok, {httpOnly: true})
+  return res.send("Ok");
+});
 
 
 handleArgs(process.argv);

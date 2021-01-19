@@ -1,20 +1,42 @@
 const { MongoClient } = require('mongodb');
 const { v4: uuid } = require('uuid');
+const { unixtime } = require('./utils.js');
 const loc = "mongodb://localhost:27017/";
 const DB = "dino";
 const USERS = "Users";
 const FINDINGS = "Findings";
+
+async function resetValidation(id) {
+  const users = await getCollection(USERS);
+  const slug = uuid();
+  users.updateOne({ id }, {$set : {validation: slug}});
+  return slug;
+}
+async function completeValidation(slug) {
+  const users = await getCollection(USERS);
+  users.updateOne({validation: slug}, {$set : {validation: true}});
+}
+async function hasValidation(id) {
+  const users = await getCollection(USERS);
+  const user = await users.findOne({ id });
+  return user.validation === true;
+}
 
 async function getUserByEmail(email) {
   const col = await getCollection(USERS);
   const usr = await col.findOne({email});
   return usr;
 }
+async function getUserById(id) {
+  const col = await getCollection(USERS);
+  const usr = await col.findOne({id});
+  return usr;
+}
 
 async function getCollection(name) {
-    const client = await MongoClient.connect(loc);
-    const db = await client.db(DB);
-    return db.collection(name);
+  const client = await MongoClient.connect(loc);
+  const db = await client.db(DB);
+  return db.collection(name);
 }
 
 function validateUser(usr) {
@@ -25,7 +47,7 @@ async function addUser(usr) {
   if (validateUser(usr)) {
     const users = await getCollection(USERS);
     const id = uuid();
-    users.insertOne({ ...usr, id });
+    users.insertOne({ ...usr, id, findings: [] });
     return id;
   }
   return null;
@@ -39,7 +61,7 @@ async function addFinding(finding, usr) {
     const collection = await getCollection(FINDINGS);
     const id = uuid();
     collection.insertOne({
-      date: Math.floor(new Date().getTime() / 1000),
+      date: unixtime(),
       ...finding,
       usr,
       id,
@@ -92,4 +114,8 @@ module.exports = {
   addFinding,
   addUser,
   getUserByEmail,
+  getUserById,
+  resetValidation,
+  completeValidation,
+  hasValidation,
 };
