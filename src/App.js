@@ -3,14 +3,21 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  useHistory,
 } from "react-router-dom";
+import axios from 'axios';
+
+import Signin from './pages/Signin';
 import './App.css';
 
 
 const Loading = () => {
+  const history = useHistory();
   useEffect(() => {
-    // TODO: ping server to see if signed in
+    axios.get("/api/refresh")
+      .then(() => history.push("/main"))
+      .catch(() => history.push("/signin"))
   });
   return <p className="loading">Loading...</p>
 }
@@ -19,11 +26,11 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/about">
-          <div><p>about</p></div>
+        <Route path="/main">
+          <div><p>main</p></div>
         </Route>
-        <Route path="/users">
-          <div><p>users</p></div>
+        <Route path="/signin">
+          <Signin/>
         </Route>
         <Route path="/">
           <Loading/>

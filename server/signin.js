@@ -6,8 +6,8 @@ async function apiCheckEmail (req, res) {
   const email = req.params.email;
   const user = await database.getUserByEmail(email);
   if (user) {
-    res.status(200);
-    return res.send("Ok");
+    res.status(204);
+    return res.send();
   } else {
     res.status(404);
     return res.send("Not Found");
@@ -66,7 +66,7 @@ function createSigninFunctions (router) {
   router.post('/signin', apiSignin);
   router.post('/signup', apiSignup);
   router.get('/validate/:slug', apiValidate);
-  router.post('/upgrade', apiUpgrade);
+  router.get('/upgrade', apiUpgrade);
 }
 
 module.exports = createSigninFunctions;

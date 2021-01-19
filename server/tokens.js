@@ -10,7 +10,6 @@ function create(params) {
   delete tokObj.validation;
   tokObj.exp = unixtime() + (isTmp ? 60 * 15 : 60 * 60 * 24 * 7); // 15min or 7days
   tokObj.isFull = !isTmp;
-  console.log(tokObj);
   return jwt.sign(tokObj, jwtSecret);
 }
 
