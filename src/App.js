@@ -1,24 +1,35 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 import './App.css';
+
+
+const Loading = () => {
+  useEffect(() => {
+    // TODO: ping server to see if signed in
+  });
+  return <p className="loading">Loading...</p>
+}
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        <Route path="/about">
+          <div><p>about</p></div>
+        </Route>
+        <Route path="/users">
+          <div><p>users</p></div>
+        </Route>
+        <Route path="/">
+          <Loading/>
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 
