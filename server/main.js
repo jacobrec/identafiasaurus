@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const createSignin = require('./signin.js');
+const createFindings = require('./findings.js');
 const database = require('./database.js');
 const token = require('./tokens.js');
 
@@ -76,6 +77,16 @@ secureEndpoints.get('/refresh', async (req, res) => {
   res.cookie('auth', tok, {httpOnly: true})
   return res.send("Ok");
 });
+
+secureEndpoints.get('/profile', async (req, res) => {
+  const user = await database.getUserById(req.tok.id);
+  user.findings = user.findings.length;
+  delete user._id;
+  delete user.id;
+  delete user.validation;
+  return res.send(user);
+});
+createFindings(secureEndpoints);
 
 
 handleArgs(process.argv);

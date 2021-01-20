@@ -46,7 +46,7 @@ const pollForUpgrade = (setState, history) => {
     .then(() => {
       console.log('polling complete');
       setState(State.Complete);
-      history.push('/home');
+      history.push('/');
     })
     .catch(() =>
       window.setTimeout(() => {
@@ -77,14 +77,12 @@ const SignIn = () => {
         <button onClick={() => checkEmail(email, setState, history)}>Next</button>
       </Frame>
     );
-    break;
   case State.Signin:
     return (
       <Frame>
         <p>Signin</p>
       </Frame>
     );
-    break;
   case State.Signup:
     return (
       <Frame>
@@ -100,29 +98,25 @@ const SignIn = () => {
         </button>
       </Frame>
     );
-    break;
   case State.Validating:
     return (
       <Frame>
         <h1>Validating</h1>
       </Frame>
     );
-    break;
   case State.Complete:
     return (
       <Frame>
         <h1>Done</h1>
       </Frame>
     );
-    break;
   default:
     return (
       <Frame>
         <h1>An error has occured :(</h1>
       </Frame>
       );
-      break;
     }
   };
 
-  export default SignIn;
+export default SignIn;

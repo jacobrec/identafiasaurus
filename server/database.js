@@ -6,6 +6,12 @@ const DB = "dino";
 const USERS = "Users";
 const FINDINGS = "Findings";
 
+async function getAllFindings() {
+  const col = await getCollection(FINDINGS);
+  var cursor = col.find();
+  return cursor.toArray();
+}
+
 async function resetValidation(id) {
   const users = await getCollection(USERS);
   const slug = uuid();
@@ -118,4 +124,5 @@ module.exports = {
   resetValidation,
   completeValidation,
   hasValidation,
+  getAllFindings
 };
